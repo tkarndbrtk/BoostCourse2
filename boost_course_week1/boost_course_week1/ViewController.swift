@@ -192,6 +192,6 @@ class ViewController: UIViewController,
         self.player.currentTime = TimeInterval(sender.value)
     }
     
-    // MARK: AVAudioPl
+    // MARK: AVAudioPlayer
 }
 
