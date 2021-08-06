@@ -1,11 +1,12 @@
 //
 //  AppDelegate.swift
-//  boost_course_week1
+//  difficult
 //
 //  Created by non_alcohol_plz on 2021/08/05.
 //
 
 import UIKit
+
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 

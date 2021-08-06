@@ -17,6 +17,7 @@ class ViewController: UIViewController,
     var timer: Timer!
     
     // MARK: IBOutlets
+
     @IBOutlet weak var playPauseButton: UIButton!
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var progressSlider: UISlider!
@@ -24,12 +25,13 @@ class ViewController: UIViewController,
     // MARK: Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        addPlayPauseButton()
 //        self.addViewsWithCode()
         self.initializePlayer()
     }
-    // Mark: - Methods
-    // Mark: Custom Method
-    func intializePlayer() {
+    // MARK: -Methods
+    // MARK: Custom Method
+    func initializePlayer() {
         
         guard let soundAsset: NSDataAsset = NSDataAsset(name: "sound") else{
             print("음원 파일 에셋을 가져올 수 없습니다.")
@@ -49,12 +51,12 @@ class ViewController: UIViewController,
         self.progressSlider.value = Float(self.player.currentTime)
     }
     
-    func  updateTimeLabelText(time: TimeInterval) {
+    func updateTimeLabelText(time: TimeInterval) {
         let minute: Int = Int(time / 60)
         let second: Int = Int(time.truncatingRemainder(dividingBy: 60))
         let milisecond: Int = Int(time.truncatingRemainder(dividingBy: 1)) * 100
         
-        let timeText: String = String(format: "%02ld:%02ld:%02ld", minute, second, milisecond)
+        let timeText: String = String(format: "%02ld:%02ld:%02ld:", minute, second, milisecond)
         
         self.timeLabel.text = timeText
     }
@@ -192,6 +194,33 @@ class ViewController: UIViewController,
         self.player.currentTime = TimeInterval(sender.value)
     }
     
-    // MARK: AVAudioPlayer
+    // MARK: AVAudioPlayerDelegate
+    func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
+        
+        guard let error: Error = error else{
+            print("오디오 플레이어 디코드 오류발생")
+            return
+        }
+        
+        let message: String
+        message = "오디오 플레이어 오류 발생 \(error.localizedDescription)"
+        
+        let alert: UIAlertController = UIAlertController(title: "알림", message: message, preferredStyle: UIAlertController.Style.alert)
+        
+        let okAction: UIAlertAction = UIAlertAction(title: "확인", style: UIAlertAction.Style.default) {(action:UIAlertAction) -> Void in
+        
+            self.dismiss(animated: true, completion: nil)
+        }
+        
+        alert.addAction(okAction)
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        self.playPauseButton.isSelected = false
+        self.progressSlider.value = 0
+        self.updateTimeLabelText(time: 0)
+        self.invalidateTimer()
+    }
 }
 
